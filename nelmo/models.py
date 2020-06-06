@@ -1,14 +1,14 @@
 from django.contrib.auth.models import User
 from django.db import models
-# from tinymce.models import HTMLField
-import random
+from tinymce.models import HTMLField
+
 # Create your models here.
     
 class Profile(models.Model):
-    profile_photo = models.ImageField(blank=True)
+    profile_photo = models.ImageField('profile/', null = True)
     bio = models.TextField()
-    user = models.ForeignKey(User,on_delete=models.CASCADE )
-    last_update = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User)
+    last_update = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:
         ordering = ['-last_update']
@@ -25,11 +25,11 @@ class Profile(models.Model):
 
 
 class Image(models.Model):
-    image = models.ImageField(upload_to ='image/')
-    image_name = models.CharField(max_length =30)
-    image_caption = models.TextField(blank=True)
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    profile = models.ForeignKey(Profile,on_delete=models.CASCADE )
+    image = models.ImageField(upload_to ='image/', null=True)
+    image_name = models.CharField(max_length =30, null=True)
+    image_caption = models.TextField(null=True)
+    user = models.ForeignKey(User, null=True)
+    profile = models.ForeignKey(Profile)
     likes = models.IntegerField(default=0)
     pub_date = models.DateTimeField(auto_now_add=True)
 
@@ -57,16 +57,18 @@ class Image(models.Model):
 
 
 class Comment(models.Model):
-    comment = models.CharField(null= True, max_length= 5000, verbose_name = 'name')
-    date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    image = models.ForeignKey(Image,on_delete=models.CASCADE)
+    comment = models.CharField(null = True, max_length= 5000, verbose_name = 'name')
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    user = models.ForeignKey(User, null=True)
+    image = models.ForeignKey(Image, null= True)
 
     class Meta:
         verbose_name = "comments"
         verbose_name_plural = "comments"
+
     class Meta:
-        ordering = ['-date']     
+        ordering = ['-date']        
+
     def save_comment(self):
         self.save()
 
